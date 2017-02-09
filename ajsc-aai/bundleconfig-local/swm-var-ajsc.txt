@@ -1,0 +1,3 @@
+#This file is for SWM node variable default replacement. SWM node variables will already exist on CSI nodes. This file is used
+#for dev teams to override the default SWM node variables. The examples given are meant to be just that: EXAMPLES. Please,
+#REMOVE/DELETE/ADD/MODIFY these values for YOUR SWM package based on the needs of your project.

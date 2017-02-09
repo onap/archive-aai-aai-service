@@ -1,0 +1,25 @@
+#########################################################################
+# Archive and/or delete the AAI logs 
+# Arg1: The directory containing the log files
+# Arg2: The number of days after which a log will be archived
+# Arg3: The number of days after which an archived log will be deleted
+##########################################################################
+# application logs includes all subdirectories under PROJECT_HOME/LOGS that have *.log and *.log.<date> log files
+10 00 * * * . /etc/profile.d/aai.sh; ${PROJECT_HOME}/scripts/logcleanup.sh ${PROJECT_HOME}/logs 7 15 >> ${PROJECT_HOME}/logs/misc/logcleanup.log.$(date +\%Y-\%m-\%d) 2>&1
+# tomee logs
+11 00 * * * . /etc/profile.d/aai.sh; ${PROJECT_HOME}/scripts/tomeelogcleanup.sh ${PROJECT_HOME}/servers/aai/logs 7 15 >> ${PROJECT_HOME}/logs/misc/tomeelogcleanup.log.$(date +\%Y-\%m-\%d) 2>&1
+#########################################################################
+# Archive and/or delete the AAI db related out files
+########################################################################## 
+# db snapshot .out files
+17 00 * * * . /etc/profile.d/aai.sh; ${PROJECT_HOME}/scripts/dotOutMiddle_cleanup.sh ${PROJECT_HOME}/logs/data/dataSnapshots 5 30 >> ${PROJECT_HOME}/logs/misc/dotOutMiddle_cleanup.log.$(date +\%Y-\%m-\%d) 2>&1
+# db grooming .out files
+19 00 * * * . /etc/profile.d/aai.sh; ${PROJECT_HOME}/scripts/dotOutEnd_cleanup.sh ${PROJECT_HOME}/logs/data/dataGrooming 5 30 >> ${PROJECT_HOME}/logs/misc/dotOutEnd_cleanup.log.$(date +\%Y-\%m-\%d) 2>&1
+########################################################################
+# Run the DataGrooming script
+########################################################################
+10 1,7,13,20 * * *  . /etc/profile.d/aai.sh; ${PROJECT_HOME}/scripts/dataGrooming.sh -autoFix -dupeFixOn -dontFixOrphans >> ${PROJECT_HOME}/logs/misc/run_dataGrooming.log.$(date +\%Y-\%m-\%d) 2>&1
+########################################################################
+# Take snapshot of our data
+########################################################################
+45 * * * *  . /etc/profile.d/aai.sh; ${PROJECT_HOME}/scripts/dataSnapshot.sh JUST_TAKE_SNAPSHOT >> ${PROJECT_HOME}/logs/misc/run_dataSnapshot.log.$(date +\%Y-\%m-\%d) 2>&1

@@ -1,0 +1,18 @@
+And to add a schemamod for a release, a file containing one or more schemaMod parameter lines is created.
+If the directory for that release does not exist, add it
+
+The doSchemaMods.sh script requires the release to be passed
+as a parameter. It finds and applies schemamods under
+the release folder matching the parameter.
+
+This script is expected to be run for each installation.
+
+e.g.
+
+bundleconfig/etc/scriptdata/schemamods/v8/100-subscriber-name.txt
+
+and 
+
+100-subscriber-name.txt will have
+
+subscriber-name String index true

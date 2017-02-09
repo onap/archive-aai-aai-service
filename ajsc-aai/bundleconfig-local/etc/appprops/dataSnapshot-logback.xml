@@ -1,0 +1,108 @@
+<configuration>
+	<property name="logDirectory" value="${AJSC_HOME}/logs" />
+
+	<appender name="dataSnapshot" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+		<File>${logDirectory}/dataSnapshot/error.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logDirectory}/dataSnapshot/error.log.%d{yyyy-MM-dd}</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="dataSnapshotdebug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<File>${logDirectory}/dataSnapshot/debug.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logDirectory}/dataSnapshot/debug.log.%d{yyyy-MM-dd}</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="dataSnapshotmetric" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<File>${logDirectory}/dataSnapshot/metrics.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logDirectory}/dataSnapshot/metrics.log.%d{yyyy-MM-dd}</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+	</appender>
+	
+	<logger name="org.reflections" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="org.apache.zookeeper" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="org.apache.hadoop" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="com.thinkaurelius" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="ch.qos.logback.classic" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="ch.qos.logback.core" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="com.att.eelf" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="org.openecomp.aai" level="INFO" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="com.sun.jersey.api.client" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="org.eclipse.jetty.util.log" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	<logger name="java.net" level="WARN" additivity="false">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</logger>
+	
+	<root level="INFO">
+		<appender-ref ref="dataSnapshot"/>
+		<appender-ref ref="dataSnapshotdebug"/>
+		<appender-ref ref="dataSnapshotmetric"/>
+	</root>
+</configuration>

@@ -1,0 +1,7 @@
+.settings
+target/
+**/logs/
+bundleconfig-local/etc/oxm
+bundleconfig-local/etc/logback.xml
+/.pydevproject
+/test_csvWriter.csv
