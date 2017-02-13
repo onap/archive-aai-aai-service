@@ -13,10 +13,7 @@
   <properties>
   	  	<dockerLocation>${basedir}/target/swm/package/nix/dist_files/</dockerLocation>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<docker.login></docker.login>
-		<docker.password></docker.password>
-		<docker.registry>${docker_registry}</docker.registry>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> 
   </properties>
   <dependencies>
 		<!-- AJSC related dependencies -->
@@ -32,9 +29,6 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<!-- For dom4j dependency ONLY! - If deploying to CSI env, remove "provided" 
-			scope. In CSI env, this jar MUST be included within service project's swm 
-			package -->
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
@@ -47,8 +41,7 @@
 			<version>2.6</version>
 		</dependency>
 
-		<!-- eelf dependency --> 
-<dependency> 
+		<dependency> 
 			<groupId>com.att.eelf</groupId> 
 			<artifactId>eelf-core</artifactId> 
 			<version>0.0.1</version> 
@@ -78,14 +71,11 @@
 			<version>1.1.7</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.codehaus.janino</groupId>
 			<artifactId>janino</artifactId>
 			<version>2.7.8</version>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -96,13 +86,7 @@
 			<artifactId>commons-collections</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>jdk.tools</groupId>
-			<artifactId>jdk.tools</artifactId>
-			<version>1.8.0_101</version>
-			<scope>system</scope>
-			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
-		</dependency>
+
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -402,15 +386,10 @@
                 <version>0.4.11</version>
                 <configuration>
                 	<verbose>true</verbose>
-					<registry>${docker.registry}</registry>
-					<authConfig>
-						<username>${docker.login}</username>
-						<password>${docker.password}</password>
-					</authConfig>
-                    <imageName>${docker.registry}/${project.artifactId}</imageName>
+					
+                    <imageName>${docker.push.registry}/${project.artifactId}</imageName>
                     <dockerDirectory>${dockerLocation}</dockerDirectory>
-                    <serverId>docker-hub</serverId>
-                    <registryUrl>http://${docker.registry}</registryUrl>
+                    <serverId>docker-hub</serverId>                   
                     <imageTags>
                         <imageTag>${docker_imageversion}</imageTag>
                         <imageTag>latest</imageTag>
@@ -583,6 +562,13 @@
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
+			 <plugin>
+             	<groupId>org.apache.maven.plugins</groupId>
+             	<artifactId>maven-deploy-plugin</artifactId>             	
+             	<configuration>
+             	<skip>true</skip>
+             	</configuration>
+             </plugin>
 			</plugins>
 	</build>
 		<profiles>
