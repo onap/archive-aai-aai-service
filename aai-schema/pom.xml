@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.openecomp.aai.aai-service</groupId>
     <artifactId>aai-service</artifactId>
-    <version>${openecomp.release}</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>aai-schema</artifactId>
   <name>aai-schema</name>
