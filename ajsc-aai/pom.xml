@@ -554,13 +554,16 @@
 				<version>2.12.4</version>
 				<configuration>
 					<reuseForks>false</reuseForks>
-					<forkMode>always</forkMode> 
+					<threadCount>1</threadCount> 
 					<argLine>-javaagent:${project.build.directory}/agents/powermock-javaagent.jar
 						-noverify</argLine>
 					<systemPropertyVariables>
 						<AJSC_HOME>.</AJSC_HOME>
 						<BUNDLECONFIG_DIR>bundleconfig-local</BUNDLECONFIG_DIR>
 					</systemPropertyVariables>
+					<excludes>
+            			<exclude>**/*.java</exclude>            
+          				</excludes>
 				</configuration>
 			</plugin>
 			 <plugin>

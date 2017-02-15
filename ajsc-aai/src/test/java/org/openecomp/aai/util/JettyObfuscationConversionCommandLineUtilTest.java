@@ -37,6 +37,7 @@ public class JettyObfuscationConversionCommandLineUtilTest {
 	/**
 	 * Test.
 	 */
+	
 	@Test
 	public void test() {
 		//setup, this will catch main's print statements for evaluation
