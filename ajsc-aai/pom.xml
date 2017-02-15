@@ -331,7 +331,7 @@
   	</dependency>
   </dependencies>
   <build>
-		<finalName>aai</finalName>	
+		
 		<plugins>
 		 <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -441,7 +441,7 @@
 						<plugin>
 							<groupId>org.openecomp.aai.aai-service</groupId>
 							<artifactId>annotations</artifactId>
-							<version>${openecomp.release}</version>
+							<version>${project.release}</version>
 						</plugin>
 					</plugins>
 				</configuration>
@@ -533,14 +533,14 @@
 			        <artifactItem>
 			          <groupId>org.openecomp.aai.aai-service</groupId>
 			          <artifactId>aai-schema</artifactId>
-			          <version>${openecomp.release}</version>
+			          <version>1.0.0-SNAPSHOT</version>
 			          <outputDirectory>bundleconfig-local/etc</outputDirectory>
 			          <includes>oxm/*.xml</includes>
 			        </artifactItem>
 			        <artifactItem>
 			          <groupId>org.openecomp.aai.aai-service</groupId>
 			          <artifactId>aai-schema</artifactId>
-			          <version>${openecomp.release}</version>
+			          <version>1.0.0-SNAPSHOT</version>
 			          <outputDirectory>src/main</outputDirectory>
 			          <includes>aai_schema/*.xsd</includes>
 			        </artifactItem>
