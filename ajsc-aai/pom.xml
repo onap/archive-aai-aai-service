@@ -337,6 +337,70 @@
   </dependencies>
   <build>
     <plugins>	
+		  	 <plugin>
+          	        <groupId>org.apache.maven.plugins</groupId>
+          	        <artifactId>maven-resources-plugin</artifactId>
+          	        <version>2.7</version>
+          	        <executions>
+          	            <execution>
+          	                <id>copy-docker-file</id>
+          	                <phase>package</phase>
+          	                <goals>
+          	                    <goal>copy-resources</goal>
+          	                </goals>
+          	                <configuration>
+          	                    <outputDirectory>${dockerLocation}</outputDirectory>
+          	                    <overwrite>true</overwrite>
+          	                    <resources>
+          	                        <resource>
+          	                            <directory>${basedir}/src/main/resources/docker</directory>
+          	                            <filtering>true</filtering>
+          	                            <includes>
+          	                                <include>**/*</include>
+          	                            </includes>
+          	                        </resource>
+          	                    </resources>
+          	                </configuration>
+          	            </execution>
+          	            <execution>
+          	                <id>copy-commonlibs-file</id>
+          	                <phase>package</phase>
+          	                <goals>
+          	                    <goal>copy-resources</goal>
+          	                </goals>
+          	                <configuration>
+          	                    <outputDirectory>${dockerLocation}/commonLibs</outputDirectory>
+          	                    <overwrite>true</overwrite>
+          	                    <resources>
+          	                        <resource>
+          	                            <directory>${basedir}/target/commonLibs</directory>
+          	                            <filtering>false</filtering>
+          	                            <includes>
+          	                                <include>*.jar</include>
+          	                            </includes>
+          	                        </resource>
+          	                    </resources>
+          	                </configuration>
+          	            </execution>
+          	        </executions>
+          	    </plugin>
+          	    <plugin>
+          	        <groupId>com.spotify</groupId>
+          	        <artifactId>docker-maven-plugin</artifactId>
+          	        <version>0.4.11</version>
+          	        <configuration>
+          	        	<verbose>true</verbose>
+		  				
+				<imageName>${docker.push.registry}/openecomp/${project.artifactId}</imageName>
+          	            <dockerDirectory>${dockerLocation}</dockerDirectory>
+          	            <serverId>docker-hub</serverId>                   
+          	            <imageTags>
+          	                <imageTag>${docker_imageversion}</imageTag>
+          	                <imageTag>latest</imageTag>
+          	            </imageTags>
+          	            <forceTags>true</forceTags>
+          	        </configuration>
+          	    </plugin>
 		<plugin>
 			<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -552,78 +616,6 @@
 					</plugin>					
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-		  <id>docker</id>
-		  <build>
-			<defaultGoal>docker:build</defaultGoal>
-			<plugins>
-		  	 <plugin>
-          	        <groupId>org.apache.maven.plugins</groupId>
-          	        <artifactId>maven-resources-plugin</artifactId>
-          	        <version>2.7</version>
-          	        <executions>
-          	            <execution>
-          	                <id>copy-docker-file</id>
-          	                <phase>package</phase>
-          	                <goals>
-          	                    <goal>copy-resources</goal>
-          	                </goals>
-          	                <configuration>
-          	                    <outputDirectory>${dockerLocation}</outputDirectory>
-          	                    <overwrite>true</overwrite>
-          	                    <resources>
-          	                        <resource>
-          	                            <directory>${basedir}/src/main/resources/docker</directory>
-          	                            <filtering>true</filtering>
-          	                            <includes>
-          	                                <include>**/*</include>
-          	                            </includes>
-          	                        </resource>
-          	                    </resources>
-          	                </configuration>
-          	            </execution>
-          	            <execution>
-          	                <id>copy-commonlibs-file</id>
-          	                <phase>package</phase>
-          	                <goals>
-          	                    <goal>copy-resources</goal>
-          	                </goals>
-          	                <configuration>
-          	                    <outputDirectory>${dockerLocation}/commonLibs</outputDirectory>
-          	                    <overwrite>true</overwrite>
-          	                    <resources>
-          	                        <resource>
-          	                            <directory>${basedir}/target/commonLibs</directory>
-          	                            <filtering>false</filtering>
-          	                            <includes>
-          	                                <include>*.jar</include>
-          	                            </includes>
-          	                        </resource>
-          	                    </resources>
-          	                </configuration>
-          	            </execution>
-          	        </executions>
-          	    </plugin>
-          	    <plugin>
-          	        <groupId>com.spotify</groupId>
-          	        <artifactId>docker-maven-plugin</artifactId>
-          	        <version>0.4.11</version>
-          	        <configuration>
-          	        	<verbose>true</verbose>
-		  				
-				<imageName>${docker.push.registry}/ecomp/${project.artifactId}</imageName>
-          	            <dockerDirectory>${dockerLocation}</dockerDirectory>
-          	            <serverId>docker-hub</serverId>                   
-          	            <imageTags>
-          	                <imageTag>${docker_imageversion}</imageTag>
-          	                <imageTag>latest</imageTag>
-          	            </imageTags>
-          	            <forceTags>true</forceTags>
-          	        </configuration>
-          	    </plugin>
-		  	 </plugins>
-		 </build>
 		</profile>
 	</profiles>
 </project>
