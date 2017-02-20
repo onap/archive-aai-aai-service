@@ -48,8 +48,8 @@ public class ModelInjestor {
 	private ModelInjestor() {
 		try {
 			injestModels();
-		} catch (FileNotFoundException | JAXBException e) {
-			System.exit(1);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -87,8 +87,8 @@ public class ModelInjestor {
 	 * @throws FileNotFoundException the file not found exception
 	 */
 	private void injestModel (Version version) throws JAXBException, FileNotFoundException {
-		String fileName = AAIConstants.AAI_HOME_ETC_OXM + "aai_oxm_" + version.toString() + ".xml";
-		InputStream iStream = new FileInputStream(new File(fileName));
+		String fileName = "/oxm/"+ "aai_oxm_" + version.toString() + ".xml";
+		InputStream iStream = this.getClass().getResourceAsStream(fileName);
 		Map<String, Object> properties = new HashMap<String, Object>(); 
 		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, iStream);
 		final DynamicJAXBContext jaxbContext = DynamicJAXBContextFactory.createContextFromOXM(this.getClass().getClassLoader(), properties);
