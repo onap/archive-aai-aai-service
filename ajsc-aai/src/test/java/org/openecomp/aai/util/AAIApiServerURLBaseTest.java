@@ -20,7 +20,8 @@
 
 package org.openecomp.aai.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,35 +31,29 @@ import java.util.Map;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.junit.Rule;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openecomp.aai.util.AAIApiServerURLBase;
-import org.openecomp.aai.util.AAIConfig;
-import org.openecomp.aai.util.AAIConstants;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import static org.mockito.Mockito.*;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.modules.agent.PowerMockAgent;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 
+@RunWith(PowerMockRunner.class)
 @PrepareForTest({PhaseInterceptorChain.class, AAIConfig.class})
-
 public class AAIApiServerURLBaseTest {
-	@Rule
-	public PowerMockRule rule = new PowerMockRule();
-	
-	static {
-	     PowerMockAgent.initializeIfNeeded();
-	 }
+
+	@BeforeClass
+	public static void configure() {
+		System.setProperty("AJSC_HOME", ".");
+		System.setProperty("BUNDLECONFIG_DIR", "bundleconfig-local");
+	}
 	
 	 /**
  	 * Test get hostname.
  	 *
  	 * @throws Exception the exception
  	 */
- 	@Test
+	@Test
 	  public void testGetHostname() throws Exception {
 	    PowerMockito.mockStatic(PhaseInterceptorChain.class);	    
 	    Map <String, List<String>> hm = new HashMap<String, List<String>>();
@@ -80,7 +75,7 @@ public class AAIApiServerURLBaseTest {
  	 */
  	@Test
 	  public void testGetWithNullHostname() throws Exception {
-		 PowerMockito.mockStatic(AAIConfig.class);
+		PowerMockito.mockStatic(AAIConfig.class);
 	    String defaultHostname = "default-name";
 	    when(AAIConfig.get(AAIConstants.AAI_SERVER_URL_BASE)).thenReturn(defaultHostname);
 	    assertEquals(defaultHostname, AAIApiServerURLBase.get());
