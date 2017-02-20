@@ -612,7 +612,7 @@
           	        <configuration>
           	        	<verbose>true</verbose>
 		  				
-          	            <imageName>${docker.push.registry}/${project.artifactId}</imageName>
+				<imageName>${docker.push.registry}/ecomp/${project.artifactId}</imageName>
           	            <dockerDirectory>${dockerLocation}</dockerDirectory>
           	            <serverId>docker-hub</serverId>                   
           	            <imageTags>
