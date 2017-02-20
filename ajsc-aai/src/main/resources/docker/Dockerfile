@@ -24,8 +24,9 @@ RUN apt-get install --reinstall ca-certificates && sudo -E add-apt-repository pp
 # Setup JAVA_HOME, this is useful for docker commandline
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-# Install Chef
-RUN curl -LO  https://packages.chef.io/stable/ubuntu/14.04/chefdk_0.17.17-1_amd64.deb
+# Install Chef using insecure mode and if it fails try tlsv1
+RUN curl -k -LO  https://packages.chef.io/stable/ubuntu/14.04/chefdk_0.17.17-1_amd64.deb || \
+    curl --tlsv1 -LO https://packages.chef.io/stable/ubuntu/14.04/chefdk_0.17.17-1_amd64.deb 
 RUN dpkg -i chefdk_0.17.17-1_amd64.deb 
 RUN rm chefdk_0.17.17-1_amd64.deb 
 
