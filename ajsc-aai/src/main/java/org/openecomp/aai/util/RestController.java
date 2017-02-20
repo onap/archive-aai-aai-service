@@ -710,7 +710,7 @@ public class RestController {
      *       fromAppId:
      *       transId:
      *       
-     *     Will return null (if the resource doesn’t exist)  (or) 
+     *     Will return null (if the resource doesn't exist)  (or) 
      *     Will return the specified resource from the Graph.
      *     
      *     Example:
