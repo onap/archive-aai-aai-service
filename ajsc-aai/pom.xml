@@ -85,7 +85,6 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>
@@ -227,6 +226,7 @@
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
@@ -496,14 +496,11 @@
 					<reuseForks>false</reuseForks>
 					<threadCount>1</threadCount> 
 					<argLine>-javaagent:${project.build.directory}/agents/powermock-javaagent.jar
-						-noverify</argLine>
+					-noverify</argLine>
 					<systemPropertyVariables>
 						<AJSC_HOME>.</AJSC_HOME>
 						<BUNDLECONFIG_DIR>bundleconfig-local</BUNDLECONFIG_DIR>
 					</systemPropertyVariables>
-					<excludes>
-            			<exclude>**/*.java</exclude>            
-          				</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
