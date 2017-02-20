@@ -294,7 +294,7 @@
 	    <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>license-maven-plugin</artifactId>
-            <version>1.10</version>
+            <version>1.12</version>
             <configuration>
                 <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
                 <licenseName>apache_v2</licenseName>
