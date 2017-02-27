@@ -406,7 +406,7 @@ public class DbSearchWithTags{
 		  Iterable <?> verts = thisLevelVertex.query().direction(Direction.OUT).has(edgeTag,true).vertices();
 		  Iterator <?> vertI = verts.iterator();
 		  
-		  ArrayList <TitanVertex> nodeList = new <TitanVertex> ArrayList ();
+		  ArrayList <TitanVertex> nodeList = new ArrayList<TitanVertex>();
 		  while( vertI != null && vertI.hasNext() ){
         	  TitanVertex tmpVert = (TitanVertex) vertI.next();
         	  nodeList.add(tmpVert);
@@ -522,7 +522,7 @@ public class DbSearchWithTags{
 		  Iterator <?> vertI = verts.iterator();
 		  
 		  //int levelNodeCount = 0;
-		  ArrayList <TitanVertex> nodeList = new <TitanVertex> ArrayList ();
+		  ArrayList <TitanVertex> nodeList = new ArrayList<TitanVertex>();
 		  while( vertI != null && vertI.hasNext() ){
 			  TitanVertex tmpVert = (TitanVertex) vertI.next();
 			  String nodeType = tmpVert.<String>property("aai-node-type").orElse(null);

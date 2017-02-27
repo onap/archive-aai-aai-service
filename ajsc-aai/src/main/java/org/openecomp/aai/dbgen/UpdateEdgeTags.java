@@ -68,7 +68,7 @@ public class UpdateEdgeTags {
 		HashMap <String,Object> edgeRuleHash = new HashMap <String,Object>();
 		HashMap <String,Object> edgeRulesFullHash = new HashMap <String,Object>();
 		HashMap <String,Object> edgeRuleLabelToKeyHash = new HashMap <String,Object>();
-		ArrayList <String> labelMapsToMultipleKeys = new <String> ArrayList ();
+		ArrayList <String> labelMapsToMultipleKeys = new ArrayList<String>();
 		
     	int tagCount = DbEdgeRules.EdgeInfoMap.size();
 		// Loop through all the edge-rules make sure they look right and
