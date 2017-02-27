@@ -15,6 +15,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> 
 		<skipTests>false</skipTests>
+        <!-- sonar properties -->
+        <sonar.jacoco.reportPath>${basedir}/target/jacoco.exec</sonar.jacoco.reportPath>  
+        <sonar.language>java</sonar.language>  
+	<sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>  
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
   </properties>
   <dependencies>
 		<!-- AJSC related dependencies -->
@@ -342,6 +348,15 @@
   </dependencies>
   <build>
     <finalName>aai</finalName>
+    <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+            </plugins>
+    </pluginManagement>
     <plugins>	
 		  	 <plugin>
           	        <groupId>org.apache.maven.plugins</groupId>
@@ -381,8 +396,10 @@
           	                        <resource>
           	                            <directory>${basedir}/target/commonLibs</directory>
           	                            <filtering>false</filtering>
+	     
           	                            <includes>
           	                                <include>*.jar</include>
+      
           	                            </includes>
           	                        </resource>
           	                    </resources>
@@ -407,6 +424,31 @@
           	            <forceTags>true</forceTags>
           	        </configuration>
           	    </plugin>
+		<plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.7.201606060606</version>  
+		<configuration>
+		  <dumpOnExit>true</dumpOnExit>
+		  <includes>
+		    <include>org.openecomp.*</include>
+		  </includes>
+		</configuration>
+                <executions>    
+                    <execution>  
+                        <configuration>  
+                            <destFile>${sonar.jacoco.reportPath}</destFile>  
+                        </configuration>  
+                        <id>pre-test</id>
+                        <phase>process-test-classes</phase>  
+                        <goals>  
+                            <goal>prepare-agent</goal>  
+                        </goals>  
+                    </execution>  
+                    <!-- we want to execute jacoco:prepare-agent-integration in test phase,  
+                    but before executing maven failsafe plugin -->  
+                </executions>  
+            </plugin>
 		<plugin>
 			<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -567,7 +609,7 @@
 					<reuseForks>false</reuseForks>
 					<threadCount>1</threadCount> 
 					<argLine>-javaagent:${project.build.directory}/agents/powermock-javaagent.jar
-					-noverify</argLine>
+					  -noverify ${argLine}</argLine>
 					<systemPropertyVariables>
 						<AJSC_HOME>.</AJSC_HOME>
 						<BUNDLECONFIG_DIR>bundleconfig-local</BUNDLECONFIG_DIR>
