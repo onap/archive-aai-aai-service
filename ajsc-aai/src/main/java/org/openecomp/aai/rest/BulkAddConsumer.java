@@ -188,7 +188,7 @@ public class BulkAddConsumer extends RESTAPI {
 			
 			//unless a top level error gets thrown, we want to 201 bc the client wanted a "fire and forget" kind of setup
 			response = Response
-					.status(Status.OK)
+					.status(Status.CREATED)
 					.entity(returnPayload)
 					.build();
 		} catch (AAIException e) { //these catches needed for handling top level errors in payload parsing where the whole request must fail out
