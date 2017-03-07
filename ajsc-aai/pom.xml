@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.openecomp.aai.aai-service</groupId>
     <artifactId>aai-service</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
   <artifactId>ajsc-aai</artifactId>
   <name>ajsc</name>
@@ -17,6 +17,9 @@
 		<skipTests>false</skipTests>
         <!-- sonar properties -->
 		<sonar.language>java</sonar.language>
+		<docker.image.version>1.0.0</docker.image.version>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     	<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     	<sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     	<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco.exec</sonar.jacoco.reportPath>
@@ -339,12 +342,12 @@
 	<dependency>
   		<groupId>org.openecomp.aai.aai-service</groupId>
   		<artifactId>aai-schema</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
+  		<version>1.0.0</version>
   	</dependency>
   	<dependency>
   		<groupId>org.openecomp.aai.aai-service</groupId>
   		<artifactId>annotations</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
+  		<version>1.0.0</version>
   	</dependency>
   </dependencies>
   <build>
@@ -435,7 +438,6 @@
           	            <dockerDirectory>${dockerLocation}</dockerDirectory>
           	            <serverId>docker-hub</serverId>                   
           	            <imageTags>
-          	                <imageTag>${docker_imageversion}</imageTag>
           	                <imageTag>latest</imageTag>
           	            </imageTags>
           	            <forceTags>true</forceTags>
