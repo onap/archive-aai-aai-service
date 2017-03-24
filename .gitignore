@@ -1,6 +1,7 @@
 .settings
 .project
 .classpath
+.gitreview
 target/
 **/logs/
 bundleconfig-local/etc/auth/aai-client-cert.p12
