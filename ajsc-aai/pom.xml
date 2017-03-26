@@ -436,7 +436,7 @@
 		  				
 				<imageName>${docker.push.registry}/openecomp/${project.artifactId}</imageName>
           	            <dockerDirectory>${dockerLocation}</dockerDirectory>
-			    <serverId>${docker.push.registry}</serverId>                   
+			    <serverId>docker-hub</serverId>                   
           	            <imageTags>
           	                <imageTag>latest</imageTag>
           	            </imageTags>
