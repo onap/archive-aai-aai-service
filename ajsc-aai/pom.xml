@@ -438,9 +438,7 @@
           	            <dockerDirectory>${dockerLocation}</dockerDirectory>
 			    <serverId>${docker.push.registry}</serverId>                   
           	            <imageTags>
-				<imageTag>${docker.image.version}-SNAPSHOT-${maven.build.timestamp}</imageTag>
-          	                <imageTag>${docker.image.version}-STAGING-${maven.build.timestamp}</imageTag>
-          	                <imageTag>1.0-STAGING-latest</imageTag>
+          	                <imageTag>latest</imageTag>
           	            </imageTags>
           	            <forceTags>true</forceTags>
           	        </configuration>
