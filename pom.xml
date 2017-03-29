@@ -22,7 +22,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<module.ajsc.namespace.name>ActiveAndAvailableInventory-CloudNetwork</module.ajsc.namespace.name>
 		<module.ajsc.namespace.version>v1</module.ajsc.namespace.version>
-		<nexusproxy>https://nexus.openecomp.org</nexusproxy>
+		<nexusproxy>https://nexus.onap.org</nexusproxy>
         <ajscRuntimeVersion>2.0.0</ajscRuntimeVersion>
 
 		<!-- This will be the Absolute Root of the Project and should contain NO 
@@ -109,7 +109,7 @@
                   <repository>
                          <id>ecomp-snapshots</id>
                           <name>ECOMP Snapshot Repository</name>
-                         <url>https://nexus.openecomp.org/content/repositories/snapshots/</url>
+			  <url>${nexusproxy}/content/repositories/snapshots/</url>
                   </repository>
 
           </repositories>
