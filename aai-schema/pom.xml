@@ -11,6 +11,10 @@
   <name>aai-schema</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <nexusproxy>https://nexus.onap.org</nexusproxy>
+    <snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
+    <releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+    <stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
   </properties>
   <dependencies>
     <dependency>
@@ -103,12 +107,12 @@
 		<repository>
 			<id>ecomp-releases</id>
 			<name>ECOMP Release Repository</name>
-			<url>https://nexus.openecomp.org/content/repositories/releases/</url>
+      <url>${nexusproxy}/${releaseNexusPath}</url>
 		</repository>
 		<snapshotRepository>
 			<id>ecomp-snapshots</id>
 			<name>ECOMP Snapshot Repository</name>
-			<url>https://nexus.openecomp.org/content/repositories/snapshots/</url>
+      <url>${nexusproxy}/${snapshotNexusPath}</url>
 		</snapshotRepository>
 		<site>
 			<id>ecomp-javadoc</id>
