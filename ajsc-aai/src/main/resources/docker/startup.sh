@@ -65,11 +65,17 @@ if [ ! -z "$ARG" ] && [ "$ARG" = "simple" ]; then
 else
 
     PROTOCOL=${PROTOCOL:-https};
-    GITLAB_CERTNAME=${GITLAB_CERTNAME};
-    GITLAB_USERNAME=${GITLAB_USERNAME};
-    GITLAB_PASSWORD=${GITLAB_PASSWORD};
+    GIT_SERVER_URL=${GIT_SERVER_URL:-gerrit.onap.org};
+    GIT_USERNAME=${GIT_USERNAME};
+    GIT_PASSWORD=${GIT_PASSWORD};
 
-    docker_giturl=${PROTOCOL}://${GITLAB_USERNAME}:${GITLAB_PASSWORD}@${GITLAB_CERTNAME}/${AAI_REPO_PATH};
+    docker_giturl="";
+
+    if [ ! -z "$GIT_USERNAME" ] && [ ! -z "$GIT_PASSWORD" ]; then
+	docker_giturl=${PROTOCOL}://${GIT_USERNAME}:${GIT_PASSWORD}@${GIT_SERVER_URL}/${AAI_REPO_PATH};
+    else
+	docker_giturl=${PROTOCOL}://${GIT_SERVER_URL}/${AAI_REPO_PATH};
+    fi
 
     cd /var/chef/
 
