@@ -54,22 +54,27 @@
 
 		<!-- For using CXF with Maven -->
 		<cxf.version>3.0.4</cxf.version>
+		<openecomp.nexus.host>nexus.onap.org</openecomp.nexus.host>
+		<openecomp.nexus.url>https://${openecomp.nexus.host}/content</openecomp.nexus.url>
+		<openecomp.nexus.snapshot-url>${openecomp.nexus.url}/repositories/snapshots/</openecomp.nexus.snapshot-url>
+		<openecomp.nexus.release-url>${openecomp.nexus.url}/repositories/releases/</openecomp.nexus.release-url>
+		<openecomp.nexus.javadocs-url>dav:${openecomp.nexus.url}/sites/site/org/onap/aai-service/${project.version}</openecomp.nexus.javadocs-url>
 	</properties>
 	<distributionManagement>
+		<site>
+			<id>ecomp-site</id>
+			<url>${openecomp.nexus.javadocs-url}</url>
+		</site>
 		<repository>
 			<id>ecomp-releases</id>
-			<name>ECOMP Release Repository</name>
-			<url>${nexusproxy}/content/repositories/releases/</url>
+			<name>openecomp-repository-releases</name>
+			<url>${openecomp.nexus.release-url}</url>
 		</repository>
 		<snapshotRepository>
 			<id>ecomp-snapshots</id>
-			<name>ECOMP Snapshot Repository</name>
-			<url>${nexusproxy}/content/repositories/snapshots/</url>
+			<name>openecomp-repository-snapshots</name>
+			<url>${openecomp.nexus.snapshot-url}</url>
 		</snapshotRepository>
-		<site>
-		    <id>ecomp-site</id>
-		    <url>dav:${nexusproxy}${sitePath}</url>
-		</site>
 	</distributionManagement>
 	
 		<!-- Plugins and repositories -->
