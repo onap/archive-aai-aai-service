@@ -20,108 +20,99 @@
 
 package org.openecomp.aai.ajsc_aai.filemonitor;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+public class ServicePropertiesMap {
 
-public class ServicePropertiesMap 
-{
-	private static HashMap<String, HashMap<String, String>> mapOfMaps = new HashMap<String, HashMap<String, String>>();
-	static final Logger logger = LoggerFactory.getLogger(ServicePropertiesMap.class);
-	
-	/**
-	 * Refresh.
-	 *
-	 * @param file the file
-	 * @throws Exception the exception
-	 */
-	public static void refresh(File file) throws Exception
-	{
-		try
-		{
-			logger.info("Loading properties - " + (file != null?file.getName():""));
-			
-			//Store .json & .properties files into map of maps
-			String filePath = file.getPath();
-			
-			if(filePath.lastIndexOf(".json")>0){
-				
-				ObjectMapper om = new ObjectMapper();
-				TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
-				HashMap<String, String> propMap = om.readValue(file, typeRef);
-				HashMap<String, String> lcasePropMap = new HashMap<String, String>();
-				for (String key : propMap.keySet() )
-				{
-					String lcaseKey = ifNullThenEmpty(key);
-					lcasePropMap.put(lcaseKey, propMap.get(key));
-				}
-				
-				mapOfMaps.put(file.getName(), lcasePropMap);
-				
-				
-			}else if(filePath.lastIndexOf(".properties")>0){
-				Properties prop = new Properties();
-				FileInputStream fis = new FileInputStream(file);
-				prop.load(fis);
-				
-				@SuppressWarnings("unchecked")
-				HashMap<String, String> propMap = new HashMap<String, String>((Map)prop);
-				
-				mapOfMaps.put(file.getName(), propMap);
-			}
+    private static HashMap<String, HashMap<String, String>> mapOfMaps = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(ServicePropertiesMap.class);
 
-			logger.info("File - " + file.getName() + " is loaded into the map and the corresponding system properties have been refreshed");
-		}
-		catch (Exception e)
-		{
-			logger.error("File " + (file != null?file.getName():"") + " cannot be loaded into the map ", e);
-			throw new Exception("Error reading map file " + (file != null?file.getName():""), e);
-		}
-	}
-	
-	/**
-	 * Gets the property.
-	 *
-	 * @param fileName the file name
-	 * @param propertyKey the property key
-	 * @return the property
-	 */
-	public static String getProperty(String fileName, String propertyKey)
-	{
-		HashMap<String, String> propMap = mapOfMaps.get(fileName);
-		return propMap!=null?propMap.get(ifNullThenEmpty(propertyKey)):"";
-	}
-	
-	/**
-	 * Gets the properties.
-	 *
-	 * @param fileName the file name
-	 * @return the properties
-	 */
-	public static HashMap<String, String> getProperties(String fileName){
-		return mapOfMaps.get(fileName);
-	}
-	
-	/**
-	 * If null then empty.
-	 *
-	 * @param key the key
-	 * @return the string
-	 */
-	private static String ifNullThenEmpty(String key) {
-		if (key == null) {
-			return "";
-		} else {					
-			return key;
-		}		
-	}
+    /**
+     * Refresh.
+     *
+     * @param file the file
+     * @throws Exception the exception
+     */
+    public static void refresh(File file) throws Exception {
+        try {
+            logger.info(String.format("Loading properties - %s", file != null ? file.getName() : ""));
 
+            //Store .json & .properties files into map of maps
+            if (file != null) {
+                String filePath = file.getPath();
+
+                if (filePath.lastIndexOf(".json") > 0) {
+
+                    ObjectMapper om = new ObjectMapper();
+                    TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
+                    };
+                    HashMap<String, String> propMap = om.readValue(file, typeRef);
+                    HashMap<String, String> lcasePropMap = new HashMap<>();
+                    for (HashMap.Entry<String, String> entry : propMap.entrySet()) {
+                        String lcaseKey = ifNullThenEmpty(entry.getKey());
+                        lcasePropMap.put(lcaseKey, entry.getValue());
+                    }
+
+                    mapOfMaps.put(file.getName(), lcasePropMap);
+                } else if (filePath.lastIndexOf(".properties") > 0) {
+                    Properties prop = new Properties();
+                    FileInputStream fis = new FileInputStream(file);
+                    prop.load(fis);
+
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, String> propMap = new HashMap<String, String>((Map) prop);
+
+                    mapOfMaps.put(file.getName(), propMap);
+                }
+
+                logger.info("File - " + file.getName()
+                    + " is loaded into the map and the corresponding system properties have been refreshed");
+            } else {
+                logger.error("File  cannot be loaded into the map ");
+            }
+        } catch (Exception e) {
+            logger.error("File " + (file != null ? file.getName() : "") + " cannot be loaded into the map ", e);
+            throw new Exception("Error reading map file " + (file != null ? file.getName() : ""), e);
+        }
+    }
+
+    /**
+     * Gets the property.
+     *
+     * @param fileName the file name
+     * @param propertyKey the property key
+     * @return the property
+     */
+    public static String getProperty(String fileName, String propertyKey) {
+        HashMap<String, String> propMap = mapOfMaps.get(fileName);
+        return propMap != null ? propMap.get(ifNullThenEmpty(propertyKey)) : "";
+    }
+
+    /**
+     * Gets the properties.
+     *
+     * @param fileName the file name
+     * @return the properties
+     */
+    public static HashMap<String, String> getProperties(String fileName) {
+        return mapOfMaps.get(fileName);
+    }
+
+    /**
+     * If null then empty.
+     *
+     * @param key the key
+     * @return the string
+     */
+    private static String ifNullThenEmpty(String key) {
+        return key == null ? "" : key;
+    }
 }

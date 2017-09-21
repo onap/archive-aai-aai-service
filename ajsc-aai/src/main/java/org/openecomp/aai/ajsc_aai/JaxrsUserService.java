@@ -20,23 +20,24 @@
 
 package org.openecomp.aai.ajsc_aai;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.Map;
-import java.util.HashMap;
 
 @Path("/user")
 public class JaxrsUserService {
-	
-	private static final Map<String,String> userIdToNameMap;
-	static {
-		userIdToNameMap = new HashMap<String,String>();
-		userIdToNameMap.put("userID1","Name1");
-		userIdToNameMap.put("userID2","Name2");
-	}
-	
+
+    private static final Map<String, String> userIdToNameMap;
+
+    static {
+        userIdToNameMap = new HashMap<>();
+        userIdToNameMap.put("userID1", "Name1");
+        userIdToNameMap.put("userID2", "Name2");
+    }
+
     /**
      * Lookup user.
      *
@@ -47,8 +48,7 @@ public class JaxrsUserService {
     @Path("/{userId}")
     @Produces("text/plain")
     public String lookupUser(@PathParam("userId") String userId) {
-    	String name = userIdToNameMap.get(userId);
+        String name = userIdToNameMap.get(userId);
         return name != null ? name : "unknown id";
     }
-    
 }
