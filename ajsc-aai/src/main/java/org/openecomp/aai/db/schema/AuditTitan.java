@@ -20,108 +20,100 @@
 
 package org.openecomp.aai.db.schema;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-
 import com.thinkaurelius.titan.core.EdgeLabel;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 public class AuditTitan extends Auditor {
 
-	private final TitanGraph graph;
-	
-	/**
-	 * Instantiates a new audit titan.
-	 *
-	 * @param g the g
-	 */
-	public AuditTitan (TitanGraph g) {
-		this.graph = g;
-		buildSchema();
-	}
-	
-	/**
-	 * Builds the schema.
-	 */
-	private void buildSchema() {
-		populateProperties();
-		populateIndexes();
-		populateEdgeLabels();
-	}
-	
-	/**
-	 * Populate properties.
-	 */
-	private void populateProperties() {
-		TitanManagement mgmt = graph.openManagement();
-		Iterable<PropertyKey> iterable = mgmt.getRelationTypes(PropertyKey.class);
-		Iterator<PropertyKey> titanProperties = iterable.iterator();
-		PropertyKey propKey = null;
-		while (titanProperties.hasNext()) {
-			propKey = titanProperties.next();
-			DBProperty prop = new DBProperty();
-			
-			prop.setName(propKey.name());
-			prop.setCardinality(propKey.cardinality());
-			prop.setTypeClass(propKey.dataType());
-			
-			this.properties.put(prop.getName(), prop);
-		}	
-	}
-	
-	/**
-	 * Populate indexes.
-	 */
-	private void populateIndexes() {
-		TitanManagement mgmt = graph.openManagement();
-		Iterable<TitanGraphIndex> iterable = mgmt.getGraphIndexes(Vertex.class);
-		Iterator<TitanGraphIndex> titanIndexes = iterable.iterator();
-		TitanGraphIndex titanIndex = null;
-		while (titanIndexes.hasNext()) {
-			titanIndex = titanIndexes.next();
-			if (titanIndex.isCompositeIndex()) {
-				DBIndex index = new DBIndex();
-				LinkedHashSet<DBProperty> dbProperties = new LinkedHashSet<>();
-				index.setName(titanIndex.name());
-				index.setUnique(titanIndex.isUnique());
-				PropertyKey[] keys = titanIndex.getFieldKeys();
-				for (PropertyKey key : keys) {
-					dbProperties.add(this.properties.get(key.name()));
-				}
-				index.setProperties(dbProperties);
-				index.setStatus(titanIndex.getIndexStatus(keys[0]));
-				this.indexes.put(index.getName(), index);
-			}
-		}	
-	}
-	
-	/**
-	 * Populate edge labels.
-	 */
-	private void populateEdgeLabels() {
-		TitanManagement mgmt = graph.openManagement();
-		Iterable<EdgeLabel> iterable = mgmt.getRelationTypes(EdgeLabel.class);
-		Iterator<EdgeLabel> titanEdgeLabels = iterable.iterator();
-		EdgeLabel edgeLabel = null;
-		while (titanEdgeLabels.hasNext()) {
-			edgeLabel = titanEdgeLabels.next();
-			EdgeProperty edgeProperty = new EdgeProperty();
-			
-			edgeProperty.setName(edgeLabel.name());
-			edgeProperty.setMultiplicity(edgeLabel.multiplicity());
-			
-			this.edgeLabels.put(edgeProperty.getName(), edgeProperty);
-		}	
-	}
-	
+    private final TitanGraph graph;
+
+    /**
+     * Instantiates a new audit titan.
+     *
+     * @param g the g
+     */
+    public AuditTitan(TitanGraph g) {
+        this.graph = g;
+        buildSchema();
+    }
+
+    /**
+     * Builds the schema.
+     */
+    private void buildSchema() {
+        populateProperties();
+        populateIndexes();
+        populateEdgeLabels();
+    }
+
+    /**
+     * Populate properties.
+     */
+    private void populateProperties() {
+        TitanManagement mgmt = graph.openManagement();
+        Iterable<PropertyKey> iterable = mgmt.getRelationTypes(PropertyKey.class);
+        Iterator<PropertyKey> titanProperties = iterable.iterator();
+        PropertyKey propKey;
+        while (titanProperties.hasNext()) {
+            propKey = titanProperties.next();
+            DBProperty prop = new DBProperty();
+
+            prop.setName(propKey.name());
+            prop.setCardinality(propKey.cardinality());
+            prop.setTypeClass(propKey.dataType());
+
+            this.properties.put(prop.getName(), prop);
+        }
+    }
+
+    /**
+     * Populate indexes.
+     */
+    private void populateIndexes() {
+        TitanManagement mgmt = graph.openManagement();
+        Iterable<TitanGraphIndex> iterable = mgmt.getGraphIndexes(Vertex.class);
+        Iterator<TitanGraphIndex> titanIndexes = iterable.iterator();
+        TitanGraphIndex titanIndex;
+        while (titanIndexes.hasNext()) {
+            titanIndex = titanIndexes.next();
+            if (titanIndex.isCompositeIndex()) {
+                DBIndex index = new DBIndex();
+                LinkedHashSet<DBProperty> dbProperties = new LinkedHashSet<>();
+                index.setName(titanIndex.name());
+                index.setUnique(titanIndex.isUnique());
+                PropertyKey[] keys = titanIndex.getFieldKeys();
+                for (PropertyKey key : keys) {
+                    dbProperties.add(this.properties.get(key.name()));
+                }
+                index.setProperties(dbProperties);
+                index.setStatus(titanIndex.getIndexStatus(keys[0]));
+                this.indexes.put(index.getName(), index);
+            }
+        }
+    }
+
+    /**
+     * Populate edge labels.
+     */
+    private void populateEdgeLabels() {
+        TitanManagement mgmt = graph.openManagement();
+        Iterable<EdgeLabel> iterable = mgmt.getRelationTypes(EdgeLabel.class);
+        Iterator<EdgeLabel> titanEdgeLabels = iterable.iterator();
+        EdgeLabel edgeLabel;
+        while (titanEdgeLabels.hasNext()) {
+            edgeLabel = titanEdgeLabels.next();
+            EdgeProperty edgeProperty = new EdgeProperty();
+
+            edgeProperty.setName(edgeLabel.name());
+            edgeProperty.setMultiplicity(edgeLabel.multiplicity());
+
+            this.edgeLabels.put(edgeProperty.getName(), edgeProperty);
+        }
+    }
 }

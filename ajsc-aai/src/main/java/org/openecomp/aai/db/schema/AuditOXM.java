@@ -20,19 +20,22 @@
 
 package org.openecomp.aai.db.schema;
 
+import com.google.common.collect.Multimap;
+import com.thinkaurelius.titan.core.Cardinality;
+import com.thinkaurelius.titan.core.Multiplicity;
+import com.thinkaurelius.titan.core.schema.SchemaStatus;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.openecomp.aai.db.AAIProperties;
 import org.openecomp.aai.dbmodel.DbEdgeRules;
 import org.openecomp.aai.introspection.Introspector;
@@ -42,200 +45,204 @@ import org.openecomp.aai.introspection.ModelType;
 import org.openecomp.aai.introspection.Version;
 import org.openecomp.aai.logging.LogLineBuilder;
 import org.openecomp.aai.util.AAIConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.Multimap;
-import com.thinkaurelius.titan.core.Cardinality;
-import com.thinkaurelius.titan.core.Multiplicity;
-import com.thinkaurelius.titan.core.schema.SchemaStatus;
-
 public class AuditOXM extends Auditor {
 
+    private static final Logger log = LoggerFactory.getLogger(AuditOXM.class);
+    private Set<Introspector> allObjects;
+    private final LogLineBuilder llBuilder = new LogLineBuilder();
 
-	private Set<Introspector> allObjects;
-	private final LogLineBuilder llBuilder = new LogLineBuilder();
-	
-	/**
-	 * Instantiates a new audit OXM.
-	 *
-	 * @param version the version
-	 */
-	public AuditOXM(Version version) {
-		Loader loader = LoaderFactory.createLoaderForVersion(ModelType.MOXY, version, llBuilder);
-		Set<String> objectNames = getAllObjects(version);
-		allObjects = new HashSet<>();
-		for (String key : objectNames) {
-			Introspector temp = loader.introspectorFromName(key);
-			allObjects.add(temp);
-			this.createDBProperties(temp);
-		}
-		for (Introspector temp : allObjects) {
-			this.createDBIndexes(temp);
-		}
-		createEdgeLabels();
-		
-	}
+    /**
+     * Instantiates a new audit OXM.
+     *
+     * @param version the version
+     */
+    public AuditOXM(Version version) {
+        Loader loader = LoaderFactory.createLoaderForVersion(ModelType.MOXY, version, llBuilder);
+        Set<String> objectNames = getAllObjects(version);
+        allObjects = new HashSet<>();
+        for (String key : objectNames) {
+            Introspector temp = loader.introspectorFromName(key);
+            allObjects.add(temp);
+            this.createDBProperties(temp);
+        }
+        for (Introspector temp : allObjects) {
+            this.createDBIndexes(temp);
+        }
+        createEdgeLabels();
+    }
 
-	/**
-	 * Gets the all objects.
-	 *
-	 * @param version the version
-	 * @return the all objects
-	 */
-	private Set<String> getAllObjects(Version version) {
-		String fileName = AAIConstants.AAI_HOME_ETC_OXM + "aai_oxm_" + version.toString() + ".xml";
-		Set<String> result = new HashSet<>();
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		try {
-			docFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(fileName);
-			NodeList list = doc.getElementsByTagName("java-type");
-			for (int i = 0; i < list.getLength(); i++) {
-				result.add(list.item(i).getAttributes().getNamedItem("name").getNodeValue());
-			}
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    /**
+     * Gets the all objects.
+     *
+     * @param version the version
+     * @return the all objects
+     */
+    private Set<String> getAllObjects(Version version) {
+        String fileName = AAIConstants.AAI_HOME_ETC_OXM + "aai_oxm_" + version.toString() + ".xml";
+        Set<String> result = new HashSet<>();
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        try {
+            docFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(fileName);
+            NodeList list = doc.getElementsByTagName("java-type");
+            for (int i = 0; i < list.getLength(); i++) {
+                result.add(list.item(i).getAttributes().getNamedItem("name").getNodeValue());
+            }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            // TODO Auto-generated catch block
+            log.error(e.getLocalizedMessage(), e);
+        }
 
-		result.remove("EdgePropNames");
-		return result;
-		
-	}
-	
-	/**
-	 * Creates the DB properties.
-	 *
-	 * @param temp the temp
-	 */
-	private void createDBProperties(Introspector temp) {
-		List<String> objectProperties = temp.getProperties();
-		
-		for (String prop : objectProperties) {
-			if (!properties.containsKey(prop)) {
-				DBProperty dbProperty = new DBProperty();
-				dbProperty.setName(prop);
-				if (temp.isListType(prop)) {
-					dbProperty.setCardinality(Cardinality.SET);
-					if (temp.isSimpleGenericType(prop)) {
-						Class<?> clazz = null;
-						try {
-							clazz = Class.forName(temp.getGenericType(prop));
-						} catch (ClassNotFoundException e) {
-							clazz = Object.class;
-						}
-						dbProperty.setTypeClass(clazz);
-						properties.put(prop, dbProperty);
-					}
-				} else {
-					dbProperty.setCardinality(Cardinality.SINGLE);
-					if (temp.isSimpleType(prop)) {
-						Class<?> clazz = null;
-						try {
-							clazz = Class.forName(temp.getType(prop));
-						} catch (ClassNotFoundException e) {
-							clazz = Object.class;
-						}
-						dbProperty.setTypeClass(clazz);
-						properties.put(prop, dbProperty);
-					}
-				}
-			}
-		}
-		
-	}
-	
-	/**
-	 * Creates the DB indexes.
-	 *
-	 * @param temp the temp
-	 */
-	private void createDBIndexes(Introspector temp) {
-		String uniqueProps = temp.getMetadata("uniqueProps");
-		String namespace = temp.getMetadata("namespace");
-		if (uniqueProps == null) {
-			uniqueProps = "";
-		}
-		if (namespace == null) {
-			namespace = "";
-		}
-		boolean isTopLevel = namespace != "";
-		List<String> unique = Arrays.asList(uniqueProps.split(","));
-		List<String> indexed = temp.getIndexedProperties();
-		List<String> keys = temp.getKeys();
-		
-		for (String prop : indexed) {
-			DBIndex dbIndex = new DBIndex();
-			LinkedHashSet<DBProperty> properties = new LinkedHashSet<>();
-			if (!this.indexes.containsKey(prop)) {
-				dbIndex.setName(prop);
-				dbIndex.setUnique(unique.contains(prop));
-				properties.add(this.properties.get(prop));
-				dbIndex.setProperties(properties);
-				dbIndex.setStatus(SchemaStatus.ENABLED);
-				this.indexes.put(prop, dbIndex);
-			}
-		}
-		if (keys.size() > 1 || isTopLevel) {
-			DBIndex dbIndex = new DBIndex();
-			LinkedHashSet<DBProperty> properties = new LinkedHashSet<>();
-			dbIndex.setName("key-for-" + temp.getDbName());
-			if (!this.indexes.containsKey(dbIndex.getName())) {
-				boolean isUnique = false;
-				if (isTopLevel) {
-					properties.add(this.properties.get(AAIProperties.NODE_TYPE));
-				}
-				for (String key : keys) {
-					properties.add(this.properties.get(key));
-	
-					if (unique.contains(key) && !isUnique) {
-						isUnique = true;
-					}
-				}
-				dbIndex.setUnique(isUnique);
-				dbIndex.setProperties(properties);
-				dbIndex.setStatus(SchemaStatus.ENABLED);
-				this.indexes.put(dbIndex.getName(), dbIndex);
-			}
-		}
+        result.remove("EdgePropNames");
+        return result;
+    }
 
-	}
-	
-	/**
-	 * Creates the edge labels.
-	 */
-	private void createEdgeLabels() {
-		Multimap<String, String> edgeRules = DbEdgeRules.EdgeRules;
-		for (String key : edgeRules.keySet()) {
-			Collection<String> collection = edgeRules.get(key);
-			EdgeProperty prop = new EdgeProperty();
-			//there is only ever one, they used the wrong type for EdgeRules
-			String label = "";
-			for (String item : collection) {
-				label = item.split(",")[0];
-			}
-			prop.setName(label);
-			prop.setMultiplicity(Multiplicity.MULTI);
-			this.edgeLabels.put(label, prop);
-		}
-	}
-	
-	/**
-	 * Gets the all introspectors.
-	 *
-	 * @return the all introspectors
-	 */
-	public Set<Introspector> getAllIntrospectors() {
-		return this.allObjects;
-	}
-	
+    /**
+     * Creates the DB properties.
+     *
+     * @param temp the temp
+     */
+    private void createDBProperties(Introspector temp) {
+        List<String> objectProperties = temp.getProperties();
+
+        for (String prop : objectProperties) {
+            if (!properties.containsKey(prop)) {
+                DBProperty dbProperty = new DBProperty();
+                dbProperty.setName(prop);
+                if (temp.isListType(prop)) {
+                    handleListTypePropertyForIntrospector(dbProperty, prop, temp);
+                } else {
+                    handleNonListTypePropertyForIntrospector(dbProperty, prop, temp);
+                }
+            }
+        }
+    }
+
+    private void handleListTypePropertyForIntrospector(DBProperty dbProperty, String prop, Introspector temp) {
+        dbProperty.setCardinality(Cardinality.SET);
+        if (temp.isSimpleGenericType(prop)) {
+            Class<?> clazz;
+            try {
+                clazz = Class.forName(temp.getGenericType(prop));
+            } catch (ClassNotFoundException e) {
+                clazz = Object.class;
+            }
+            dbProperty.setTypeClass(clazz);
+            properties.put(prop, dbProperty);
+        }
+    }
+
+    private void handleNonListTypePropertyForIntrospector(DBProperty dbProperty, String prop, Introspector temp) {
+        dbProperty.setCardinality(Cardinality.SINGLE);
+        if (temp.isSimpleType(prop)) {
+            Class<?> clazz;
+            try {
+                clazz = Class.forName(temp.getType(prop));
+            } catch (ClassNotFoundException e) {
+                clazz = Object.class;
+            }
+            dbProperty.setTypeClass(clazz);
+            properties.put(prop, dbProperty);
+        }
+    }
+
+    /**
+     * Creates the DB indexes.
+     *
+     * @param temp the temp
+     */
+    private void createDBIndexes(Introspector temp) {
+        String uniqueProps = temp.getMetadata("uniqueProps");
+        String namespace = temp.getMetadata("namespace");
+        if (uniqueProps == null) {
+            uniqueProps = "";
+        }
+        if (namespace == null) {
+            namespace = "";
+        }
+        boolean isTopLevel = !Objects.equals(namespace, "");
+        List<String> unique = Arrays.asList(uniqueProps.split(","));
+        List<String> indexed = temp.getIndexedProperties();
+        List<String> keys = temp.getKeys();
+
+        setDbIndexAttributes(indexed, unique);
+
+        if (keys.size() > 1 || isTopLevel) {
+            setDbIndexAttributes(isTopLevel, temp, unique, keys);
+        }
+    }
+
+    private void setDbIndexAttributes(List<String> indexed, List<String> unique) {
+        for (String prop : indexed) {
+            DBIndex dbIndex = new DBIndex();
+            LinkedHashSet<DBProperty> properties = new LinkedHashSet<>();
+            if (!this.indexes.containsKey(prop)) {
+                dbIndex.setName(prop);
+                dbIndex.setUnique(unique.contains(prop));
+                properties.add(this.properties.get(prop));
+                dbIndex.setProperties(properties);
+                dbIndex.setStatus(SchemaStatus.ENABLED);
+                this.indexes.put(prop, dbIndex);
+            }
+        }
+    }
+
+    private void setDbIndexAttributes(boolean isTopLevel, Introspector temp, List<String> unique, List<String> keys) {
+        DBIndex dbIndex = new DBIndex();
+        LinkedHashSet<DBProperty> properties = new LinkedHashSet<>();
+        dbIndex.setName("key-for-" + temp.getDbName());
+        if (!this.indexes.containsKey(dbIndex.getName())) {
+            boolean isUnique = false;
+            if (isTopLevel) {
+                properties.add(this.properties.get(AAIProperties.NODE_TYPE));
+            }
+            for (String key : keys) {
+                properties.add(this.properties.get(key));
+
+                if (unique.contains(key) && !isUnique) {
+                    isUnique = true;
+                }
+            }
+            dbIndex.setUnique(isUnique);
+            dbIndex.setProperties(properties);
+            dbIndex.setStatus(SchemaStatus.ENABLED);
+            this.indexes.put(dbIndex.getName(), dbIndex);
+        }
+    }
+
+    /**
+     * Creates the edge labels.
+     */
+
+    private void createEdgeLabels() {
+        Multimap<String, String> edgeRules = DbEdgeRules.EdgeRules;
+        for (String key : edgeRules.keySet()) {
+            Collection<String> collection = edgeRules.get(key);
+            EdgeProperty prop = new EdgeProperty();
+            //there is only ever one, they used the wrong type for EdgeRules
+            String label = "";
+            for (String item : collection) {
+                label = item.split(",")[0];
+            }
+            prop.setName(label);
+            prop.setMultiplicity(Multiplicity.MULTI);
+            this.edgeLabels.put(label, prop);
+        }
+    }
+
+    /**
+     * Gets the all introspectors.
+     *
+     * @return the all introspectors
+     */
+    public Set<Introspector> getAllIntrospectors() {
+        return this.allObjects;
+    }
 }

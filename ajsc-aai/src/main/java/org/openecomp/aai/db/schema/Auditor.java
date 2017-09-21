@@ -21,38 +21,37 @@
 package org.openecomp.aai.db.schema;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class Auditor {
 
-	protected Map<String, DBProperty> properties = new HashMap<>();
-	protected Map<String, DBIndex> indexes = new HashMap<>();
-	protected Map<String, EdgeProperty> edgeLabels = new HashMap<>();
-	
-	/**
-	 * Gets the audit doc.
-	 *
-	 * @return the audit doc
-	 */
-	public AuditDoc getAuditDoc() {
-		AuditDoc doc = new AuditDoc();
-		List<DBProperty> propertyList = new ArrayList<>();
-		List<DBIndex> indexList = new ArrayList<>();
-		List<EdgeProperty> edgeLabelList = new ArrayList<>();
-		propertyList.addAll(this.properties.values());
-		indexList.addAll(this.indexes.values());
-		edgeLabelList.addAll(this.edgeLabels.values());
-		Collections.sort(propertyList, new CompareByName());
-		Collections.sort(indexList, new CompareByName());
-		Collections.sort(edgeLabelList, new CompareByName());
-		
-		doc.setProperties(propertyList);
-		doc.setIndexes(indexList);
-		doc.setEdgeLabels(edgeLabelList);
-		
-		return doc;
-	}
+    protected Map<String, DBProperty> properties = new HashMap<>();
+    protected Map<String, DBIndex> indexes = new HashMap<>();
+    protected Map<String, EdgeProperty> edgeLabels = new HashMap<>();
+
+    /**
+     * Gets the audit doc.
+     *
+     * @return the audit doc
+     */
+    public AuditDoc getAuditDoc() {
+        AuditDoc doc = new AuditDoc();
+        List<DBProperty> propertyList = new ArrayList<>();
+        List<DBIndex> indexList = new ArrayList<>();
+        List<EdgeProperty> edgeLabelList = new ArrayList<>();
+        propertyList.addAll(this.properties.values());
+        indexList.addAll(this.indexes.values());
+        edgeLabelList.addAll(this.edgeLabels.values());
+        propertyList.sort(new CompareByName());
+        indexList.sort(new CompareByName());
+        edgeLabelList.sort(new CompareByName());
+
+        doc.setProperties(propertyList);
+        doc.setIndexes(indexList);
+        doc.setEdgeLabels(edgeLabelList);
+
+        return doc;
+    }
 }
