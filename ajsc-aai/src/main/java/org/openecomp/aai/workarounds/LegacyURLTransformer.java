@@ -21,76 +21,70 @@
 package org.openecomp.aai.workarounds;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.att.aft.dme2.internal.javaxwsrs.core.UriBuilder;
-
 public class LegacyURLTransformer {
 
-	/**
-	 * Instantiates a new legacy URL transformer.
-	 */
-	private LegacyURLTransformer() {
-		
-	}
-	
-	private static class Helper {
-		private static final LegacyURLTransformer INSTANCE = new LegacyURLTransformer();
-	}
-	
-	/**
-	 * Gets the single instance of LegacyURLTransformer.
-	 *
-	 * @return single instance of LegacyURLTransformer
-	 */
-	public static LegacyURLTransformer getInstance() {
-		return Helper.INSTANCE;
-	}
-	
-	/**
-	 * Gets the legacy URL.
-	 *
-	 * @param url the url
-	 * @return the legacy URL
-	 * @throws MalformedURLException the malformed URL exception
-	 */
-	public URL getLegacyURL(URL url) throws MalformedURLException {
-		String substring = "/aai/(?<version>v\\d+)/cloud-infrastructure/tenants/tenant/(?<tenantKey>.*?)/vservers/vserver/(?<vserverKey>[^/]*?$)";
-		String replacement = "/aai/servers/${version}/${tenantKey}/vservers/${vserverKey}";
-		Pattern p = Pattern.compile(substring);
-		String result = url.toString();
-		Matcher m = p.matcher(result);
-		if (m.find()) {
-			result = m.replaceFirst(replacement);
+    /**
+     * Instantiates a new legacy URL transformer.
+     */
+    private LegacyURLTransformer() {
 
-		}
-		URL resultUrl = new URL(result);
-		return resultUrl;
-		
-	}
-	
-	/**
-	 * Gets the current URL.
-	 *
-	 * @param url the url
-	 * @return the current URL
-	 * @throws MalformedURLException the malformed URL exception
-	 */
-	public URL getCurrentURL(URL url) throws MalformedURLException {
-		String substring = "/aai/servers/(?<version>v[23])/(?<tenantKey>.*?)/vservers/(?<vserverKey>[^/]*?$)";
-		String replacement = "/aai/${version}/cloud-infrastructure/tenants/tenant/${tenantKey}/vservers/vserver/${vserverKey}";
-		Pattern p = Pattern.compile(substring);
-		String result = url.toString();
-		Matcher m = p.matcher(result);
-		if (m.find()) {
-			result = m.replaceFirst(replacement);
+    }
 
-		}
-		
-		URL resultUrl = new URL(result);
-		return resultUrl;
-	}
+    private static class Helper {
+
+        private static final LegacyURLTransformer INSTANCE = new LegacyURLTransformer();
+    }
+
+    /**
+     * Gets the single instance of LegacyURLTransformer.
+     *
+     * @return single instance of LegacyURLTransformer
+     */
+    public static LegacyURLTransformer getInstance() {
+        return Helper.INSTANCE;
+    }
+
+    /**
+     * Gets the legacy URL.
+     *
+     * @param url the url
+     * @return the legacy URL
+     * @throws MalformedURLException the malformed URL exception
+     */
+    public URL getLegacyURL(URL url) throws MalformedURLException {
+        String substring = "/aai/(?<version>v\\d+)/cloud-infrastructure/tenants/tenant/(?<tenantKey>.*?)/vservers/"
+            + "vserver/(?<vserverKey>[^/]*?$)";
+        String replacement = "/aai/servers/${version}/${tenantKey}/vservers/${vserverKey}";
+        Pattern p = Pattern.compile(substring);
+        String result = url.toString();
+        Matcher m = p.matcher(result);
+        if (m.find()) {
+            result = m.replaceFirst(replacement);
+        }
+        return new URL(result);
+    }
+
+    /**
+     * Gets the current URL.
+     *
+     * @param url the url
+     * @return the current URL
+     * @throws MalformedURLException the malformed URL exception
+     */
+    public URL getCurrentURL(URL url) throws MalformedURLException {
+        String substring = "/aai/servers/(?<version>v[23])/(?<tenantKey>.*?)/vservers/(?<vserverKey>[^/]*?$)";
+        String replacement = "/aai/${version}/cloud-infrastructure/tenants/tenant/${tenantKey}/vservers/vserver/${vserverKey}";
+        Pattern p = Pattern.compile(substring);
+        String result = url.toString();
+        Matcher m = p.matcher(result);
+        if (m.find()) {
+            result = m.replaceFirst(replacement);
+        }
+
+        return new URL(result);
+    }
 }
