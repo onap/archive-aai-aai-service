@@ -48,6 +48,7 @@ import org.openecomp.aai.rest.util.EchoResponse;
 import org.openecomp.aai.util.AAIConfig;
 import org.openecomp.aai.util.AAIConstants;
 import org.openecomp.aai.util.HbaseSaltPrefixer;
+import org.slf4j.MDC;
 
 public class AAILogJAXRSInInterceptor extends JAXRSInInterceptor {
 
@@ -221,14 +222,19 @@ public class AAILogJAXRSInInterceptor extends JAXRSInInterceptor {
 				} else if (replacedTransId) { 
 					logMsg = "Replaced invalid requestID of " + transId + " Assigned " + newTransId;
 				}
-			} 
+				MDC.put("RequestId",newTransId);
+			}
+			else {
+				MDC.put("RequestId",transId);
+			}
 			
 			
-			List<String> fa = headersList.get("X-FromAppId");
-			if (fa != null) {
-				for (String fromAppIdValue : fa) {
+			List<String> fromAppIdList = headersList.get("X-FromAppId");
+			if (fromAppIdList != null) {
+				for (String fromAppIdValue : fromAppIdList) {
 					fromAppId = fromAppIdValue;
 				}
+				MDC.put("PartnerName",fromAppId);
 			}
 			
 			List<String> contentType = headersList.get("Content-Type");
