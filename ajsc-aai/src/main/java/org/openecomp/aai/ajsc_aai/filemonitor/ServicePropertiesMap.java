@@ -32,6 +32,9 @@ import org.slf4j.LoggerFactory;
 
 public class ServicePropertiesMap {
 
+    private ServicePropertiesMap {
+    }
+
     private static HashMap<String, HashMap<String, String>> mapOfMaps = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(ServicePropertiesMap.class);
 
@@ -68,7 +71,7 @@ public class ServicePropertiesMap {
                     prop.load(fis);
 
                     @SuppressWarnings("unchecked")
-                    HashMap<String, String> propMap = new HashMap<String, String>((Map) prop);
+                    HashMap<String, String> propMap = new HashMap<>((Map) prop);
 
                     mapOfMaps.put(file.getName(), propMap);
                 }
